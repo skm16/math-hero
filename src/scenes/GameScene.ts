@@ -55,6 +55,11 @@ export class GameScene extends Phaser.Scene {
     this.gameState.streak = 0;
     this.gameState.level = data.level || 1;
     this.gameState.monstersDefeated = 0;
+    this.gameState.monsters = [];
+    this.gameState.isPaused = false;
+    this.gameState.isHelpActive = false;
+    this.gameState.currentQuestion = null;
+    this.gameState.helpUsedForCurrentQuestion = false;
   }
 
   create(): void {
@@ -210,6 +215,7 @@ export class GameScene extends Phaser.Scene {
   private createQuestionPanel(): void {
     const panelY = GAME_HEIGHT - gameConfig.ui.questionPanelHeight;
     this.answerButtons = []; // Clear old references on scene restart
+    this.objectDisplay = []; // Clear old references on scene restart
 
     // Create panel background
     const panelBg = this.add.rectangle(
