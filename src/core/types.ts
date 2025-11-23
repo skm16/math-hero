@@ -19,7 +19,7 @@ export interface Question {
 
 export interface Monster {
   id: string;
-  sprite: Phaser.GameObjects.Sprite;
+  sprite: Phaser.GameObjects.Text;
   lane: number;
   speed: number;
   health: number;
