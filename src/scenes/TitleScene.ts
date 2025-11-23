@@ -111,7 +111,7 @@ export class TitleScene extends Phaser.Scene {
 
   private showMainMenu(): void {
     // Title
-    const titleText = this.add.text(
+    this.add.text(
       GAME_WIDTH / 2,
       150,
       'Math Heroes Adventure',
@@ -141,7 +141,7 @@ export class TitleScene extends Phaser.Scene {
     });
 
     // Mode selection buttons
-    const countingButton = this.createButton(
+    this.createButton(
       GAME_WIDTH / 2 - 150,
       500,
       250,
@@ -150,7 +150,7 @@ export class TitleScene extends Phaser.Scene {
       () => this.startGame('counting')
     );
 
-    const additionButton = this.createButton(
+    this.createButton(
       GAME_WIDTH / 2 + 150,
       500,
       250,
@@ -162,7 +162,7 @@ export class TitleScene extends Phaser.Scene {
     // Add "locked" overlay if addition not unlocked yet
     const additionUnlocked = localStorage.getItem('mathHero_additionUnlocked');
     if (!additionUnlocked) {
-      const lockOverlay = this.add.rectangle(
+      this.add.rectangle(
         GAME_WIDTH / 2 + 150,
         500,
         250,
@@ -170,7 +170,7 @@ export class TitleScene extends Phaser.Scene {
         0x000000,
         0.5
       );
-      const lockText = this.add.text(
+      this.add.text(
         GAME_WIDTH / 2 + 150,
         500,
         '🔒',

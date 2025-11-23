@@ -8,7 +8,6 @@ import {
 } from '../core/config';
 import {
   GameState,
-  Question,
   Monster,
   QuestionType
 } from '../core/types';
@@ -22,6 +21,7 @@ export class GameScene extends Phaser.Scene {
   private heartSprites: Phaser.GameObjects.Text[] = [];
   private scoreText!: Phaser.GameObjects.Text;
   private streakText!: Phaser.GameObjects.Text;
+  private levelText!: Phaser.GameObjects.Text;
   private monsterGroup!: Phaser.GameObjects.Group;
   private owlbertDialog!: Phaser.GameObjects.Container;
   private answerButtons: Phaser.GameObjects.Container[] = [];
@@ -48,12 +48,12 @@ export class GameScene extends Phaser.Scene {
     };
   }
 
-  init(data: { mode: QuestionType }): void {
+  init(data: { mode: QuestionType; level?: number; score?: number }): void {
     this.gameState.mode = data.mode || 'counting';
     this.gameState.hearts = gameConfig.player.startingHearts;
-    this.gameState.score = 0;
+    this.gameState.score = data.score || 0;
     this.gameState.streak = 0;
-    this.gameState.level = 1;
+    this.gameState.level = data.level || 1;
     this.gameState.monstersDefeated = 0;
   }
 
@@ -97,7 +97,7 @@ export class GameScene extends Phaser.Scene {
     this.generateNewQuestion();
   }
 
-  update(time: number, delta: number): void {
+  update(_time: number, delta: number): void {
     if (this.gameState.isPaused || this.gameState.isHelpActive) {
       return;
     }
@@ -117,7 +117,7 @@ export class GameScene extends Phaser.Scene {
 
   private drawCastle(): void {
     // Simple castle representation
-    const castle = this.add.text(
+    this.add.text(
       gameConfig.lanes.endX,
       GAME_HEIGHT * 0.3,
       CHARACTERS.castle,
@@ -189,6 +189,21 @@ export class GameScene extends Phaser.Scene {
       }
     );
     this.hudContainer.add(this.streakText);
+
+    // Level
+    this.levelText = this.add.text(
+      GAME_WIDTH / 2,
+      30,
+      `Level ${this.gameState.level}`,
+      {
+        fontSize: '28px',
+        color: '#ffffff',
+        stroke: '#333333',
+        strokeThickness: 3,
+        fontStyle: 'bold'
+      }
+    ).setOrigin(0.5);
+    this.hudContainer.add(this.levelText);
   }
 
   private createQuestionPanel(): void {
@@ -689,6 +704,9 @@ export class GameScene extends Phaser.Scene {
 
     // Update streak
     this.streakText.setText(`Streak: ${this.gameState.streak}`);
+
+    // Update level
+    this.levelText.setText(`Level ${this.gameState.level}`);
   }
 
   private levelComplete(): void {
@@ -706,13 +724,25 @@ export class GameScene extends Phaser.Scene {
     // Show level complete message
     const completeText = this.add.text(
       GAME_WIDTH / 2,
-      GAME_HEIGHT / 2,
-      'Level Complete!',
+      GAME_HEIGHT / 2 - 50,
+      `Level ${this.gameState.level} Complete!`,
       {
         fontSize: '64px',
         color: '#ffffff',
         stroke: '#333333',
         strokeThickness: 4
+      }
+    ).setOrigin(0.5);
+
+    this.add.text(
+      GAME_WIDTH / 2,
+      GAME_HEIGHT / 2 + 50,
+      `Score: ${this.gameState.score}`,
+      {
+        fontSize: '32px',
+        color: '#ffffff',
+        stroke: '#333333',
+        strokeThickness: 3
       }
     ).setOrigin(0.5);
 
@@ -724,8 +754,17 @@ export class GameScene extends Phaser.Scene {
       repeat: -1
     });
 
+    // Increment level and reset monsters defeated counter
+    this.gameState.level++;
+    this.gameState.monstersDefeated = 0;
+
     this.time.delayedCall(3000, () => {
-      this.scene.start('TitleScene');
+      // Restart the game scene with updated state
+      this.scene.restart({
+        mode: this.gameState.mode,
+        level: this.gameState.level,
+        score: this.gameState.score
+      });
     });
   }
 
@@ -737,7 +776,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     // Show game over message
-    const gameOverText = this.add.text(
+    this.add.text(
       GAME_WIDTH / 2,
       GAME_HEIGHT / 2,
       'Great effort, Hero!',
@@ -749,7 +788,7 @@ export class GameScene extends Phaser.Scene {
       }
     ).setOrigin(0.5);
 
-    const statsText = this.add.text(
+    this.add.text(
       GAME_WIDTH / 2,
       GAME_HEIGHT / 2 + 80,
       `Score: ${this.gameState.score}\nMonsters Stopped: ${this.gameState.monstersDefeated}`,
