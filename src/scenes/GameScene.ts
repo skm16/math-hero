@@ -149,6 +149,7 @@ export class GameScene extends Phaser.Scene {
 
   private createHUD(): void {
     this.hudContainer = this.add.container(0, 0);
+    this.heartSprites = []; // Clear old references on scene restart
 
     // Hearts
     for (let i = 0; i < gameConfig.player.maxHearts; i++) {
@@ -208,6 +209,7 @@ export class GameScene extends Phaser.Scene {
 
   private createQuestionPanel(): void {
     const panelY = GAME_HEIGHT - gameConfig.ui.questionPanelHeight;
+    this.answerButtons = []; // Clear old references on scene restart
 
     // Create panel background
     const panelBg = this.add.rectangle(
