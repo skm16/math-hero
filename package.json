@@ -1,0 +1,22 @@
+{
+  "name": "math-hero",
+  "version": "1.0.0",
+  "description": "A 2D lane-defense math game for kindergarten kids",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "phaser": "^3.90.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "typescript": "^5.9.3",
+    "vite": "^7.2.4"
+  }
+}
